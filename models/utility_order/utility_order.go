@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
+	"github.com/RonyFrancis/utlity_application/db"
 )
 
 // UtilityOrder model
@@ -61,11 +63,80 @@ func (u *UtilityOrder) GetByID(db *sql.DB, id int) ([]*UtilityOrder, error) {
 	return payload, nil
 }
 
+// All fetches all the records
+func (u *UtilityOrder) All() ([]*UtilityOrder, error) {
+	sqlQuery := fmt.Sprintf("select * from utilityorder")
+	insert, err := db.DBconnection().Query(sqlQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer insert.Close()
+	payload := make([]*UtilityOrder, 0)
+	for insert.Next() {
+		data := new(UtilityOrder)
+		err := insert.Scan(
+			&data.ID,
+			&data.TrxDate,
+			&data.TrxTime,
+			&data.UserID,
+		)
+		if err != nil {
+			return nil, err
+		}
+		payload = append(payload, data)
+	}
+	return payload, nil
+}
+
+// UpdateRecord updates record
+func (u *UtilityOrder) UpdateRecord(id int, formValue func(string) string) error {
+	sqlQuery := fmt.Sprintf("UPDATE utilityorder SET trxdate = %s, trxtime= %s, userid = %s WHERE id = %d;", formValue("trxdate"), formValue("trxtime"), formValue("userid"), id)
+	fmt.Println(sqlQuery)
+	insert, err := db.DBconnection().Query(sqlQuery)
+	if err != nil {
+		return err
+	}
+	defer insert.Close()
+	return nil
+}
+
+// CreateRecord create record
+func (u *UtilityOrder) CreateRecord() error {
+	sqlQuery := fmt.Sprintf("INSERT INTO utilityorder (trxdate, trxtime, userid) VALUES ('%s','%s','%d')", u.TrxDate, u.TrxTime, u.UserID)
+	fmt.Println(sqlQuery)
+	insert, err := db.DBconnection().Query(sqlQuery)
+	if err != nil {
+		return err
+	}
+	fmt.Println("asdas")
+	fmt.Println(insert)
+	fmt.Println("asdas")
+	defer insert.Close()
+	payload := make([]*UtilityOrder, 0)
+	for insert.Next() {
+		data := new(UtilityOrder)
+		err := insert.Scan(
+			&data.ID,
+			&data.TrxDate,
+			&data.TrxTime,
+			&data.UserID,
+		)
+		if err != nil {
+			return err
+		}
+		fmt.Println(data)
+		payload = append(payload, data)
+	}
+	fmt.Println(payload)
+
+	return nil
+}
+
 // CreateUtilityOrder create empty struct
 func CreateUtilityOrder() *UtilityOrder {
 	return &UtilityOrder{
-		TrxDate: "21",
-		TrxTime: "32",
+		TrxDate: "",
+		TrxTime: "",
 		UserID:  1,
 	}
 }

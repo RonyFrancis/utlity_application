@@ -1,0 +1,16 @@
+{{define "title"}}A templated page{{end}}
+{{define "body"}}
+<h1></h1>
+<form action="/update/{{.ID}}" method="post">
+    TrxDate:<br>
+    <input type="text" name="trxdate" value="{{.TrxDate}}">
+    <br>
+    TrxTime:<br>
+    <input type="text" name="trxtime" value="{{.TrxTime}}">
+    <br>
+    UserID:<br>
+    <input type="text" name="userid" value="{{.UserID}}">
+    <br><br>
+    <input type="submit" value="Submit">
+  </form> 
+  {{end}}

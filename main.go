@@ -6,7 +6,6 @@ import (
 
 	"github.com/RonyFrancis/utlity_application/controllers/utilities"
 	"github.com/RonyFrancis/utlity_application/db"
-	utilitiyOrder "github.com/RonyFrancis/utlity_application/models/utility_order"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
@@ -27,17 +26,12 @@ func main() {
 		fmt.Println("DB connection failed!")
 	}
 	defer dbConnect.Close()
-	fmt.Println("DB connection successful!")
-	order := utilitiyOrder.CreateUtilityOrder()
-	fmt.Println(order.GetCount(dbConnect))
-	// fmt.Println(order.InsertRecord(dbConnect))
-	// rec, err := order.GetByID(dbConnect, 10000)
-	// if err != nil {
-	// 	fmt.Println("fetch failed")
-	// }
-	// fmt.Println(rec)
 	myRouter := mux.NewRouter()
-	myRouter.HandleFunc("/", utilities.UtilityIndexLHandler).Methods("POST")
 	myRouter.HandleFunc("/show/{id}", utilities.UtilityShowHandler).Methods("GET")
+	myRouter.HandleFunc("/edit/{id}", utilities.UtilityEditHandler).Methods("GET")
+	myRouter.HandleFunc("/index", utilities.UtilityIndexHandler).Methods("GET")
+	myRouter.HandleFunc("/update/{id}", utilities.UtilityUpdateHandler).Methods("POST")
+	myRouter.HandleFunc("/new", utilities.UtilityNewHandler).Methods("GET")
+	myRouter.HandleFunc("/create", utilities.UtilityCreateHandler).Methods("POST")
 	http.ListenAndServe(":8001", myRouter)
 }
